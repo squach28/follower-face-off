@@ -14,19 +14,17 @@ router.get('/', (req, res) => {
 })
 
 router.get('/auth', (req, res) => {
-    const redirectUri = 'http://localhost:4000/callback'
-    const state = generateRandomString(10)
-    const scope = 'user-read-private user-read-email';
-    res.redirect('https://accounts.spotify.com/authorize?' + 
-        querystring.stringify({
-            response_type: 'code',
-            client_id: process.env.CLIENT_ID,
-            scope: scope,
-            redirect_uri: redirectUri,
-            state: state,
-            showDialog: true
-        })
-    )
+    const authOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Basic ' + (new Buffer.from(`${process.env.CLIENT_ID}:${process.env.CLIENT_SECRET}`).toString('base64'))
+        },
+        json: true
+    }
+    fetch('https://accounts.spotify.com/api/token?' + querystring.stringify({ grant_type: 'client_credentials'}), authOptions)   
+        .then(response => response.json())
+        .then(data => res.json(data))
 })
 
 export default router

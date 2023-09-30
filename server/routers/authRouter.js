@@ -51,7 +51,12 @@ router.get('/callback', (req, res) => {
                 grant_type: 'authorization_code'
             }), authOptions)
             .then(res => res.json())
-            .then(data => res.status(200).json(data))
+            .then(data => {
+                res.cookie('access_token', data.access_token)
+                res.cookie('refresh_token', data.refresh_token)
+                console.log('token_type', data.token_type)
+                res.status(200).json(data)
+            })
     }
 })
 

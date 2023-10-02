@@ -9,44 +9,51 @@ export const artistMiddleware = async (req, res, next) => {
     if(accessToken && timestamp) {
         if(isTokenExpired(Math.floor(timestamp / 1000), TOKEN_EXPIRATION_DURATION)) {
             const accessTokenDetails = await getAccessToken()
-            res.cookie('access_token', accessTokenDetails.access_token)
-            res.cookie('token_type', accessTokenDetails.token_type)
-            res.cookie('expires_in', accessTokenDetails.expires_in)
-            res.cookie('timestamp', Date.now())
+            req.cookies.access_token =  accessTokenDetails.access_token
+            req.cookies.token_type = accessTokenDetails.token_type
+            req.cookies.expires_in = accessTokenDetails.expires_in
+            req.cookies.timestamp = Date.now()
         }
     } else {
         const accessTokenDetails = await getAccessToken()
-        res.cookie('access_token', accessTokenDetails.access_token)
-        res.cookie('token_type', accessTokenDetails.token_type)
-        res.cookie('expires_in', accessTokenDetails.expires_in)
-        res.cookie('timestamp', Date.now())
+        req.cookies.access_token =  accessTokenDetails.access_token
+        req.cookies.token_type = accessTokenDetails.token_type
+        req.cookies.expires_in = accessTokenDetails.expires_in
+        req.cookies.timestamp = Date.now()
     }
     next()
+
 }
 
-export const getArtist = async (req, res) => {
+export const getArtist = async (req, res, next) => {
     try {
         const tokenType = req.cookies.token_type
         const accessToken = req.cookies.access_token
+        const timestamp = req.cookies.timestamp
         const artist = await fetch('https://api.spotify.com/v1/artists/6HvZYsbFfjnjFrWF950C9d', {
             headers: {
                 'Authorization': `Authorization: ${tokenType} ${accessToken}`
-            }
+            },
+            credentials: 'include'
         })
             .then(res => res.json())
             .then(data => data)
+        res.cookie('access_token', accessToken)
+        res.cookie('token_type', tokenType)
+        res.cookie('timestamp', timestamp)
         res.status(200).json(artist)
     } catch(e) {
-
+        res.status(500).json({error: 'something happened oh no'})
     }
 }
 
-export const getArtistsByCategory = async (req, res) => {
+export const getArtistsByCategory = async (req, res, next) => {
     try {
         const tokenType = req.cookies.token_type
         const accessToken = req.cookies.access_token
+        const timestamp = req.cookies.timestamp
         const category = req.query.category
-        const artist = await fetch('https://api.spotify.com/v1/search?' +
+        const artists = await fetch('https://api.spotify.com/v1/search?' +
             querystring.stringify({
                 q: `genre:${category}`,
                 type: 'artist',
@@ -56,11 +63,17 @@ export const getArtistsByCategory = async (req, res) => {
         , {
             headers: {
                 'Authorization': `Authorization: ${tokenType} ${accessToken}`
-            }
+            },
+            credentials: 'include'
         })
             .then(res => res.json())
-            .then(data => data)
-        res.status(200).json(artist)
+            .then(data => data.artists.items)
+
+        res.cookie('access_token', accessToken)
+        res.cookie('token_type', tokenType)
+        res.cookie('timestamp', timestamp)
+        res.status(200).json(artists)
+        return next()
     } catch(e) {
 
     }

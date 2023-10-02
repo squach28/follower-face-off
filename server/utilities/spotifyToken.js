@@ -21,9 +21,9 @@ export const getAccessToken = async () => {
 }
 
 export const isTokenExpired = (timestamp, expiresIn) => {
-    const currentTime = Date.now()
+    const currentTime = Date.now() / 1000
     if(currentTime - timestamp >= expiresIn) {
-        return false
+        return true
     }
-    return true
+    return false
 }

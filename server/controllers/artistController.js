@@ -1,5 +1,15 @@
+import { getAccessToken } from "../utilities/spotifyToken.js"
+
+
 export const getArtist = async (req, res) => {
     try {
+        const accessTokenDetails = await getAccessToken()
+        res.cookie('access_token', accessTokenDetails.access_token)
+        res.cookie('token_type', accessTokenDetails.token_type)
+        res.cookie('expires_in', accessTokenDetails.expires_in)
+        console.log(new Date().toDateString())
+        res.cookie('timestamp', new Date().toDateString())
+
         const tokenType = req.cookies.token_type
         const accessToken = req.cookies.access_token
         const artist = await fetch('https://api.spotify.com/v1/artists/6HvZYsbFfjnjFrWF950C9d', {

@@ -1,12 +1,10 @@
 import express from 'express'
 const app = express()
 const port = process.env.PORT || 4000
-import authRouter from './routers/authRouter.js'
 import artistRouter from './routers/artistRouter.js'
 import cookieParser from 'cookie-parser'
 
 app.use(cookieParser())
-app.use('/auth', authRouter)
 app.use('/artist', artistRouter)
 
 app.get('/', (req, res) => {

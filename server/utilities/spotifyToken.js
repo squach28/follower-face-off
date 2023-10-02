@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const getAccessToken = async () => {
+    console.log('get access token!')
     const authOptions = { 
         method: 'POST', 
         headers: { 
@@ -15,6 +16,14 @@ export const getAccessToken = async () => {
         querystring.stringify({
             grant_type: 'client_credentials'
         }), authOptions)
-    const data = res.json()
+    const data = await res.json()
     return data 
+}
+
+export const isTokenExpired = (timestamp, expiresIn) => {
+    const currentTime = Date.now()
+    if(currentTime - timestamp >= expiresIn) {
+        return false
+    }
+    return true
 }

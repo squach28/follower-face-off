@@ -3,6 +3,18 @@ import querystring from 'querystring'
 
 const TOKEN_EXPIRATION_DURATION = 3600
 
+const shuffleArray = (arr) => {
+    let currentIndex = arr.length
+    let randomIndex
+    while(currentIndex > 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex)
+        currentIndex--
+        [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]]
+    }
+
+    return arr
+}
+
 export const artistMiddleware = async (req, res, next) => {
     const accessToken = req.cookies.access_token
     const timestamp = req.cookies.timestamp
@@ -68,11 +80,12 @@ export const getArtistsByCategory = async (req, res, next) => {
         })
             .then(res => res.json())
             .then(data => data.artists.items)
-
+        const shuffled = shuffleArray(artists)
+        console.log(shuffled)
         res.cookie('access_token', accessToken)
         res.cookie('token_type', tokenType)
         res.cookie('timestamp', timestamp)
-        res.status(200).json(artists)
+        res.status(200).json(shuffled)
         return next()
     } catch(e) {
 

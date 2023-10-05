@@ -1,11 +1,14 @@
 import { Artist } from "../App"
 
-const ArtistCard = (artist: Artist) => {
+type ArtistCardProps = Artist & {
+  handleClick: () => void
+}
 
-  console.log(artist.images[0])
+const ArtistCard: React.FC<ArtistCardProps> = (artistCardProps: ArtistCardProps) => {
+
   return (
-    <div style={{backgroundImage: `url('${artist.images[0].url}')`}} className={`w-[320px] h-[320px] bg-no-repeat bg-cover text-white flex flex-col justify-center items-center gap-3 p-6 rounded-md`}>
-      <p className="text-4xl font-bold">{artist.name}</p>
+    <div style={{backgroundImage: `url('${artistCardProps.images[0].url}')`}} className={`w-[320px] h-[320px] bg-no-repeat bg-cover text-white flex flex-col justify-center items-center gap-3 p-6 rounded-md`} onClick={artistCardProps.handleClick}>
+      <p className="text-4xl font-bold select-none">{artistCardProps.name}</p>
     </div>
     )
 }

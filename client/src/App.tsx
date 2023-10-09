@@ -26,7 +26,6 @@ const App = () => {
   const [firstIndex, setFirstIndex] = useState<number|null>(null)
   const [secondIndex, setSecondIndex] = useState<number|null>(null)
   const usedArtistIds = new Set<string>()
-
   useEffect(() => {
     fetch(`http://localhost:4000/artist/getArtistsByCategory?category=pop`, {
       credentials: 'include'
@@ -40,12 +39,14 @@ const App = () => {
       })
   }, [])
 
+
   const handleArtistCardClick = () => {
     if(firstIndex !== null && secondIndex !== null) {
       usedArtistIds.add(artists[firstIndex].id)
       usedArtistIds.add(artists[secondIndex].id)
       const unusedArtists = artists.filter(artist => !usedArtistIds.has(artist.id))
       setArtists(unusedArtists)
+      
       setFirstIndex(Math.floor(Math.random() * unusedArtists.length))
       setSecondIndex(Math.floor(Math.random() * unusedArtists.length))
       setStreak(prev => prev + 1)

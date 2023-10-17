@@ -25,7 +25,7 @@ const App = () => {
   const [streak, setStreak] = useState<number>(0)
   const [firstIndex, setFirstIndex] = useState<number|null>(null)
   const [secondIndex, setSecondIndex] = useState<number|null>(null)
-  const usedArtistIds = new Set<string>()
+  const [usedArtistIds, setUsedArtistIds] = useState<Set<string>>(new Set())
   useEffect(() => {
     fetch(`http://localhost:4000/artist/getArtistsByCategory?category=pop`, {
       credentials: 'include'
@@ -34,23 +34,71 @@ const App = () => {
       .then(data => {
         const length = data.length
         setArtists(data)
-        setFirstIndex(Math.floor(Math.random() * length))
-        setSecondIndex(Math.floor(Math.random() * length))
+        setFirstIndex(0)
+        setSecondIndex(length - 1)
       })
   }, [])
 
-
-  const handleArtistCardClick = () => {
+  const handleFirstArtistCardClick = () => {
+    console.log('first clicked')
     if(firstIndex !== null && secondIndex !== null) {
-      usedArtistIds.add(artists[firstIndex].id)
-      usedArtistIds.add(artists[secondIndex].id)
-      const unusedArtists = artists.filter(artist => !usedArtistIds.has(artist.id))
-      setArtists(unusedArtists)
-      
-      setFirstIndex(Math.floor(Math.random() * unusedArtists.length))
-      setSecondIndex(Math.floor(Math.random() * unusedArtists.length))
-      setStreak(prev => prev + 1)
+      const selectedArtist = artists[firstIndex]
+      const unselectedArtist = artists[secondIndex]
+      if(judgeUserSelection(selectedArtist, unselectedArtist)) {
+        console.log('yay, you got a point')
+        incrementStreak()
+        addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
+        generateNewUnusedArtistsArr()
+      } else {
+        setStreak(0)
+        console.log('u suck')
+      }
     }
+  }
+
+
+  const handleSecondArtistCardClick = () => {
+    console.log('second clicked')
+    if(firstIndex !== null && secondIndex !== null) {
+      console.log('in')
+      const selectedArtist = artists[secondIndex]
+      const unselectedArtist = artists[firstIndex]
+      if(judgeUserSelection(selectedArtist, unselectedArtist)) {
+        console.log('yay, you got a point')
+        incrementStreak()
+        addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
+        generateNewUnusedArtistsArr()
+      } else {
+        console.log('u suck')
+      }
+    }
+  }
+
+  const incrementStreak = () => {
+    setStreak(prev => prev + 1)
+  }
+
+  const addArtistsToUsedArr = (...artists: string[]) => {
+    const newSet = usedArtistIds
+    for(const artist of artists) {
+      newSet.add(artist)
+    }
+    setUsedArtistIds(newSet)
+  }
+
+  const generateNewUnusedArtistsArr = () => {
+    console.log(usedArtistIds)
+    const unusedArtists = artists.filter(artist => !usedArtistIds.has(artist.id))
+    setArtists(() => {
+      setFirstIndex(0)
+      setSecondIndex(unusedArtists.length - 1)
+      return unusedArtists
+    })
+  }
+
+
+  const judgeUserSelection = (selectedArtist: Artist, unselectedArtist: Artist): boolean => {
+    return selectedArtist.followers.total > unselectedArtist.followers.total
   }
 
   return (
@@ -60,10 +108,9 @@ const App = () => {
         <h1 className="text-3xl font-bold">Follower Face Off</h1>
         <p>Streak: {streak}</p>
       </div>
-      <p>Which artist has more followers?</p>
-      <ArtistCard {...artists[firstIndex]} handleClick={handleArtistCardClick}/>
+      <ArtistCard {...artists[firstIndex]} handleClick={handleFirstArtistCardClick}/>
       <p className="text-center text-2xl">OR</p>
-      <ArtistCard {...artists[secondIndex]} handleClick={handleArtistCardClick} />
+      <ArtistCard {...artists[secondIndex]} handleClick={handleSecondArtistCardClick} />
     </div>
     :
     <div>Loading...</div>

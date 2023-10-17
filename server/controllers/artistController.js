@@ -70,7 +70,7 @@ export const getArtistsByCategory = async (req, res, next) => {
                 q: `genre:${category}`,
                 type: 'artist',
                 market: 'US',
-                limit: 10
+                limit: 50
             })
         , {
             headers: {
@@ -81,7 +81,6 @@ export const getArtistsByCategory = async (req, res, next) => {
             .then(res => res.json())
             .then(data => data.artists.items)
         const shuffled = shuffleArray(artists)
-        console.log(shuffled)
         res.cookie('access_token', accessToken)
         res.cookie('token_type', tokenType)
         res.cookie('timestamp', timestamp)

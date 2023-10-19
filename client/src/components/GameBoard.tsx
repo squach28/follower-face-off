@@ -1,19 +1,21 @@
 import { useState, useEffect } from "react"
 import { Artist } from "../App"
 import ArtistCard from "./ArtistCard"
+import ArtistCardSkeleton from "./ArtistCardSkeleton"
 
 type GameBoardProps =  {
-    startGame: () => void
+    category: string,
+    endGame: (streak: number) => void
   }
 
-const GameBoard = () => {
+const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => {
     const [artists, setArtists] = useState<Artist[]>([])
     const [streak, setStreak] = useState<number>(0)
     const [firstIndex, setFirstIndex] = useState<number|null>(null)
     const [secondIndex, setSecondIndex] = useState<number|null>(null)
     const [usedArtistIds, setUsedArtistIds] = useState<Set<string>>(new Set())
     useEffect(() => {
-      fetch(`http://localhost:4000/artist/getArtistsByCategory?category=pop`, {
+      fetch(`http://localhost:4000/artist/getArtistsByCategory?category=${gameBoardProps.category}`, {
         credentials: 'include'
       })
         .then(res => res.json())
@@ -35,8 +37,7 @@ const GameBoard = () => {
           addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
           generateNewUnusedArtistsArr()
         } else {
-          setStreak(0)
-          console.log('u suck')
+          gameBoardProps.endGame(streak)
         }
       }
     }
@@ -52,7 +53,7 @@ const GameBoard = () => {
           addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
           generateNewUnusedArtistsArr()
         } else {
-          console.log('u suck')
+          gameBoardProps.endGame(streak)
         }
       }
     }
@@ -84,18 +85,30 @@ const GameBoard = () => {
     }
   
     return (
-      firstIndex !== null && secondIndex !== null && artists.length > 0 ?
+
       <div className="w-full h-screen bg-black text-white flex flex-col p-4 space-around items-center">
         <div className="w-full flex justify-between items-center">
           <h1 className="text-3xl font-bold">Follower Face Off</h1>
           <p>Streak: {streak}</p>
         </div>
-        <ArtistCard {...artists[firstIndex]} handleClick={handleFirstArtistCardClick}/>
-        <p className="text-center text-2xl">OR</p>
-        <ArtistCard {...artists[secondIndex]} handleClick={handleSecondArtistCardClick} />
+        {      
+            firstIndex !== null && secondIndex !== null && artists.length > 0 ? 
+                <div className="flex flex-col flex-1">
+                    <ArtistCard {...artists[firstIndex]} handleClick={handleFirstArtistCardClick}/>
+                    <p className="text-center text-2xl">OR</p>
+                    <ArtistCard {...artists[secondIndex]} handleClick={handleSecondArtistCardClick} />
+                </div>
+                :
+                <div className="flex flex-col flex-1">
+                  <ArtistCardSkeleton />
+                  <p className="text-center text-2xl">OR</p>
+                  <ArtistCardSkeleton />
+                </div>
+                  
+        }
+
       </div>
-      :
-      <div className="text-white">Loading...</div>
+
     )
 }
 

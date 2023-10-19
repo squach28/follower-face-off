@@ -28,19 +28,32 @@ export enum GameState {
 
 const App = () => {
   const [gameState, setGameState] = useState<GameState>(GameState.NOT_STARTED)
+  const [streak, setStreak] = useState(0)
+  const categories: string[] = [
+    'pop',
+    'k-pop'
+  ]
+
+  const endGame = (streak: number) => {
+    setGameState(GameState.OVER)
+    setStreak(streak)
+    
+  }
 
   const render = () => {
     switch(gameState) {
       case GameState.NOT_STARTED:
         return <StartGameDialog startGame={startGame}/>
       case GameState.IN_PROGRESS:
-        return <GameBoard />
+        return <GameBoard category={categories[1]} endGame={endGame} />
       case GameState.OVER:
-        return <p>Game over :(</p>
+        return <p className="text-white">Game over, your score was {streak}</p>
       default:
         return null
     }
   }
+
+  
 
   const startGame = () => {
     setGameState(GameState.IN_PROGRESS)

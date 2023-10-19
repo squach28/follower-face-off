@@ -7,7 +7,7 @@ type ArtistCardProps = Artist & {
 const ArtistCard: React.FC<ArtistCardProps> = (artistCardProps: ArtistCardProps) => {
 
   return (
-    <div style={{backgroundImage: `url('${artistCardProps.images[0].url}')`}} className={`w-[320px] h-[320px] bg-no-repeat bg-cover text-white relative gap-3 p-6 rounded-md`} onClick={artistCardProps.handleClick}>
+    <div style={{backgroundImage: `url('${artistCardProps.images[0].url}')`}} className={`w-screen flex-1 bg-no-repeat bg-cover text-white relative gap-3 p-6 rounded-md`} onClick={artistCardProps.handleClick}>
       <p className="text-4xl absolute font-bold left-2 bottom-2 select-none">{artistCardProps.name}</p>
     </div>
     )

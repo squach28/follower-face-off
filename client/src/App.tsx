@@ -1,6 +1,7 @@
 import { useState } from "react";
 import StartGameDialog from "./components/StartGameDialog";
 import GameBoard from "./components/GameBoard";
+import GameOverDialog from "./components/GameOverDialog";
 
 
 export type ArtistImage = {
@@ -31,13 +32,22 @@ const App = () => {
   const [streak, setStreak] = useState(0)
   const categories: string[] = [
     'pop',
-    'k-pop'
+    'k-pop',
+    'hip-hop',
+    'rock'
   ]
+
+  const startGame = () => {
+    setGameState(GameState.IN_PROGRESS)
+  }
 
   const endGame = (streak: number) => {
     setGameState(GameState.OVER)
     setStreak(streak)
-    
+  }
+
+  const goToMenu = () => {
+    setGameState(GameState.NOT_STARTED)
   }
 
   const render = () => {
@@ -45,18 +55,12 @@ const App = () => {
       case GameState.NOT_STARTED:
         return <StartGameDialog startGame={startGame}/>
       case GameState.IN_PROGRESS:
-        return <GameBoard category={categories[1]} endGame={endGame} />
+        return <GameBoard category={categories[3]} endGame={endGame} />
       case GameState.OVER:
-        return <p className="text-white">Game over, your score was {streak}</p>
+        return <GameOverDialog streak={streak} startGame={startGame} goToMenu={goToMenu} />
       default:
         return null
     }
-  }
-
-  
-
-  const startGame = () => {
-    setGameState(GameState.IN_PROGRESS)
   }
 
   return (

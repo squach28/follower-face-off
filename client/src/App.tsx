@@ -36,6 +36,11 @@ const App = () => {
     'hip-hop',
     'rock'
   ]
+  const [category, setCategory] = useState<string>('')
+
+  const selectCategory = (category:string) => {
+    setCategory(category)
+  }
 
   const startGame = () => {
     setGameState(GameState.IN_PROGRESS)
@@ -53,9 +58,9 @@ const App = () => {
   const render = () => {
     switch(gameState) {
       case GameState.NOT_STARTED:
-        return <StartGameDialog startGame={startGame}/>
+        return <StartGameDialog startGame={startGame} categories={categories} selectCategory={selectCategory}/>
       case GameState.IN_PROGRESS:
-        return <GameBoard category={categories[3]} endGame={endGame} />
+        return <GameBoard category={category} endGame={endGame} />
       case GameState.OVER:
         return <GameOverDialog streak={streak} startGame={startGame} goToMenu={goToMenu} />
       default:

@@ -14,8 +14,16 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
     const [firstIndex, setFirstIndex] = useState<number|null>(null)
     const [secondIndex, setSecondIndex] = useState<number|null>(null)
     const [usedArtistIds, setUsedArtistIds] = useState<Set<string>>(new Set())
+    const [highestStreak, setHighestStreak] = useState<number>(0)
 
     useEffect(() => {
+      const scores = localStorage.getItem('scores')
+      if(scores) {
+        const data = JSON.parse(scores)
+        if(data[gameBoardProps.category]) {
+          setHighestStreak(data[gameBoardProps.category])
+        }
+      } 
       fetch(`http://localhost:4000/artist/getArtistsByCategory?category=${gameBoardProps.category}`, {
         credentials: 'include'
       })
@@ -27,6 +35,35 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
           setSecondIndex(length - 1)
         })
     }, [gameBoardProps.category])
+
+    const storeHighestStreak = () => {
+      const scores = localStorage.getItem('scores')
+      if(scores) {
+        let data = JSON.parse(scores)
+        console.log('hello')
+        console.log(data)
+        console.log(data[gameBoardProps.category])
+        if(data[gameBoardProps.category] !== undefined) {
+          data = {
+            ...data, 
+            [gameBoardProps.category]: Math.max(streak, data[gameBoardProps.category])
+          }
+          localStorage.setItem('scores', JSON.stringify(data))
+        } else {
+          data = {
+            ...data, 
+            [gameBoardProps.category]: streak
+          }
+          localStorage.setItem('scores', JSON.stringify(data))
+        }
+      } else {
+        const data = {
+          [gameBoardProps.category]: streak
+        }
+        localStorage.setItem('scores', JSON.stringify(data))
+      }
+      console.log('done')
+    }
   
     const handleFirstArtistCardClick = () => {
       if(firstIndex !== null && secondIndex !== null) {
@@ -38,6 +75,7 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
           addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
           generateNewUnusedArtistsArr()
         } else {
+          storeHighestStreak()
           gameBoardProps.endGame(streak)
         }
       }
@@ -54,6 +92,7 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
           addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
           generateNewUnusedArtistsArr()
         } else {
+          storeHighestStreak()
           gameBoardProps.endGame(streak)
         }
       }
@@ -87,10 +126,10 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
   
     return (
 
-      <div className="w-full h-screen bg-black text-white flex flex-col p-4 space-around items-center">
+      <div className="w-full h-screen bg-black text-white flex flex-col px-4 py-2 space-around items-center">
         <div className="w-full flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Follower Face Off</h1>
-          <p>Streak: {streak}</p>
+          <p>Highest Streak: {highestStreak}</p>
+          <p className="mb-3">Streak: {streak}</p>
         </div>
         {      
             firstIndex !== null && secondIndex !== null && artists.length > 0 ? 

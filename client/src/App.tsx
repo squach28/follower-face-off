@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import StartGameDialog from "./components/StartGameDialog";
 import GameBoard from "./components/GameBoard";
 import GameOverDialog from "./components/GameOverDialog";
+import { CategoryContext } from "./context/CategoryContext";
 
 
 export type ArtistImage = {
@@ -28,6 +29,7 @@ export enum GameState {
 }
 
 const App = () => {
+  const categoryContext =  useContext(CategoryContext)
   const [gameState, setGameState] = useState<GameState>(GameState.NOT_STARTED)
   const [streak, setStreak] = useState(0)
   const categories: string[] = [
@@ -36,13 +38,10 @@ const App = () => {
     'hip-hop',
     'rock'
   ]
-  const [category, setCategory] = useState<string>('')
-
-  const selectCategory = (category:string) => {
-    setCategory(category)
-  }
 
   const startGame = () => {
+    console.log('starting game')
+    console.log(categoryContext)
     setGameState(GameState.IN_PROGRESS)
   }
 
@@ -58,20 +57,20 @@ const App = () => {
   const render = () => {
     switch(gameState) {
       case GameState.NOT_STARTED:
-        return <StartGameDialog startGame={startGame} categories={categories} selectCategory={selectCategory}/>
+        return <StartGameDialog startGame={startGame} categories={categories} />
       case GameState.IN_PROGRESS:
-        return <GameBoard category={category} endGame={endGame} />
+        return <GameBoard category={categoryContext?.category ? categoryContext.category : 'pop'} endGame={endGame} />
       case GameState.OVER:
         return <GameOverDialog streak={streak} startGame={startGame} goToMenu={goToMenu} />
       default:
         return null
     }
   }
-
+  console.log(categoryContext)
   return (
-    <div className="h-screen bg-black">
-      {render()}
-    </div>
+      <div className="h-screen bg-black">
+        {render()}
+      </div>
   )
 }
 

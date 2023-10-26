@@ -22,7 +22,7 @@ export type Artist = {
   name: string;
 }
 
-export enum GameState {
+enum GameState {
   NOT_STARTED,
   IN_PROGRESS,
   OVER

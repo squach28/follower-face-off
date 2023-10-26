@@ -1,4 +1,6 @@
+import { useContext } from "react"
 import Dropdown from "./Dropdown"
+import { CategoryContext } from "../context/CategoryContext"
 
 type StartGameDialogProps = {
     startGame: () => void,
@@ -6,9 +8,16 @@ type StartGameDialogProps = {
 }
 
 const StartGameDialog: React.FC<StartGameDialogProps> = (startGameDialogProps: StartGameDialogProps) => {
-
+    const categoryContext = useContext(CategoryContext)
     const handleStart = () => {
-        startGameDialogProps.startGame()
+        if(categoryContext) {
+            if(categoryContext.category === 'Select') {
+                return
+            } else {
+                startGameDialogProps.startGame()
+            }
+        }
+
     }
 
     return (

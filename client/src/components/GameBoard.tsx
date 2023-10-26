@@ -15,8 +15,6 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
     const [secondIndex, setSecondIndex] = useState<number|null>(null)
     const [usedArtistIds, setUsedArtistIds] = useState<Set<string>>(new Set())
 
-    console.log(gameBoardProps.category)
-
     useEffect(() => {
       fetch(`http://localhost:4000/artist/getArtistsByCategory?category=${gameBoardProps.category}`, {
         credentials: 'include'
@@ -28,7 +26,7 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
           setFirstIndex(0)
           setSecondIndex(length - 1)
         })
-    }, [])
+    }, [gameBoardProps.category])
   
     const handleFirstArtistCardClick = () => {
       if(firstIndex !== null && secondIndex !== null) {

@@ -24,18 +24,16 @@ const Dropdown: React.FC<DropdownProps> = (dropdownProps: DropdownProps) => {
 
     console.log(categoryContext)
     return (
-        <div className="bg-white px-2 py-1 select-none">
-            <p onClick={toggleShowOptions} className="relative">{categoryContext?.category}</p>
-            <div className="relative">
+        <div className="bg-white px-2 py-1 select-none relative text-center">
+            <p onClick={toggleShowOptions} className="min-w-[100px]">{categoryContext?.category}</p>
                 {
                     showOptions ?
-                        <ul className="absolute bg-white top-0 right-0" >
-                            {dropdownProps.options.map(dropdown => <li key={dropdown} onClick={() => setOption(dropdown)}>{dropdown}</li>)}
+                        <ul className={`${showOptions ? 'absolute' : 'hidden'} bg-white top-[100%] right-0 w-full`} >
+                            {dropdownProps.options.map(dropdown => <li className="w-full" key={dropdown} onClick={() => setOption(dropdown)}>{dropdown}</li>)}
                         </ul>
                         :
                         null
                 }
-            </div>
         </div>
     )
 }

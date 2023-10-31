@@ -9,14 +9,12 @@ const Dropdown: React.FC<DropdownProps> = (dropdownProps: DropdownProps) => {
 
     const [showOptions, setShowOptions] = useState<boolean>(false)
     const categoryContext = useContext(CategoryContext)
-    
     const toggleShowOptions = () => {
         setShowOptions(prev => !prev)
     }
 
     const setOption = (option: string) => {
         if(categoryContext) {
-            console.log('setting!')
             categoryContext.setCategory(option)
         }
         setShowOptions(false)
@@ -29,7 +27,7 @@ const Dropdown: React.FC<DropdownProps> = (dropdownProps: DropdownProps) => {
                 {
                     showOptions ?
                         <ul className={`${showOptions ? 'absolute' : 'hidden'} bg-white top-[100%] right-0 w-full`} >
-                            {dropdownProps.options.map(dropdown => <li className="w-full" key={dropdown} onClick={() => setOption(dropdown)}>{dropdown}</li>)}
+                            {dropdownProps.options.map(dropdown => <li className={`w-full ${categoryContext!.category === dropdown ? 'bg-black text-white font-bold' : ''}`} key={dropdown} onClick={() => setOption(dropdown)}>{dropdown}</li>)}
                         </ul>
                         :
                         null

@@ -12,7 +12,9 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
     const [artists, setArtists] = useState<Artist[]>([])
     const [streak, setStreak] = useState<number>(0)
     const [firstIndex, setFirstIndex] = useState<number|null>(null)
+    const [firstIndexCorrect, setFirstIndexCorrect] = useState<boolean | null>(null)
     const [secondIndex, setSecondIndex] = useState<number|null>(null)
+    const [secondIndexCorrect, setSecondIndexCorrect] = useState<boolean | null>(null)
     const [usedArtistIds, setUsedArtistIds] = useState<Set<string>>(new Set())
     const [highestStreak, setHighestStreak] = useState<number>(0)
 
@@ -40,9 +42,6 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
       const scores = localStorage.getItem('scores')
       if(scores) {
         let data = JSON.parse(scores)
-        console.log('hello')
-        console.log(data)
-        console.log(data[gameBoardProps.category])
         if(data[gameBoardProps.category] !== undefined) {
           data = {
             ...data, 
@@ -71,12 +70,20 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
         const unselectedArtist = artists[secondIndex]
         if(judgeUserSelection(selectedArtist, unselectedArtist)) {
           console.log('yay, you got a point')
+          setFirstIndexCorrect(true)
+          setTimeout(() => {
+            setFirstIndexCorrect(null)
+            addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
+            generateNewUnusedArtistsArr()
+          }, 1000)
           incrementStreak()
-          addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
-          generateNewUnusedArtistsArr()
+
         } else {
+          setFirstIndexCorrect(false)
           storeHighestStreak()
-          gameBoardProps.endGame(streak)
+          setTimeout(() => {
+            gameBoardProps.endGame(streak)
+          }, 1000)
         }
       }
     }
@@ -88,12 +95,21 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
         const unselectedArtist = artists[firstIndex]
         if(judgeUserSelection(selectedArtist, unselectedArtist)) {
           console.log('yay, you got a point')
+          setSecondIndexCorrect(true)
+          setTimeout(() => {
+            setSecondIndexCorrect(null)
+            addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
+            generateNewUnusedArtistsArr()
+          }, 1000)
           incrementStreak()
-          addArtistsToUsedArr(selectedArtist.id, unselectedArtist.id)
-          generateNewUnusedArtistsArr()
+
         } else {
+          setSecondIndexCorrect(false)
           storeHighestStreak()
-          gameBoardProps.endGame(streak)
+          setTimeout(() => {
+            gameBoardProps.endGame(streak)
+          }, 1000)
+
         }
       }
     }
@@ -134,9 +150,9 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
         {      
             firstIndex !== null && secondIndex !== null && artists.length > 0 ? 
                 <div className="flex flex-col flex-1">
-                    <ArtistCard {...artists[firstIndex]} handleClick={handleFirstArtistCardClick}/>
+                    <ArtistCard {...artists[firstIndex]} handleClick={handleFirstArtistCardClick} correct={firstIndexCorrect}/>
                     <p className="text-center text-2xl">OR</p>
-                    <ArtistCard {...artists[secondIndex]} handleClick={handleSecondArtistCardClick} />
+                    <ArtistCard {...artists[secondIndex]} handleClick={handleSecondArtistCardClick} correct={secondIndexCorrect} />
                 </div>
                 :
                 <div className="flex flex-col flex-1">

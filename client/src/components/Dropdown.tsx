@@ -23,7 +23,7 @@ const Dropdown: React.FC<DropdownProps> = (dropdownProps: DropdownProps) => {
     console.log(categoryContext)
     return (
         <div className="bg-white px-2 py-1 select-none relative text-center">
-            <p onClick={toggleShowOptions} className="min-w-[100px]">{categoryContext?.category}</p>
+            <p onClick={toggleShowOptions} className="min-w-[100px] bg-white text-black">{categoryContext?.category}</p>
                 {
                     showOptions ?
                         <ul className={`${showOptions ? 'absolute' : 'hidden'} bg-white top-[100%] right-0 w-full`} >

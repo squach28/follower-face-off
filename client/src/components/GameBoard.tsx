@@ -142,20 +142,20 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
   
     return (
 
-      <div className="w-full h-screen bg-black text-white flex flex-col px-4 py-2 space-around items-center">
+      <div className="w-full h-screen bg-[#161925] text-[#CBF7ED] flex flex-col px-4 py-2 space-around items-center md:overflow-hidden">
         <div className="w-full flex justify-between items-center">
           <p>Highest Streak: {highestStreak}</p>
           <p className="mb-3">Streak: {streak}</p>
         </div>
         {      
             firstIndex !== null && secondIndex !== null && artists.length > 0 ? 
-                <div className="flex flex-col flex-1">
+                <div className="flex flex-col md:flex-row md:w-full md:justify-around md:gap-5 md:items-center md:flex flex-1">
                     <ArtistCard {...artists[firstIndex]} handleClick={handleFirstArtistCardClick} correct={firstIndexCorrect}/>
-                    <p className="text-center text-2xl">OR</p>
+                    <p className="text-center text-2xl font-bold">VS</p>
                     <ArtistCard {...artists[secondIndex]} handleClick={handleSecondArtistCardClick} correct={secondIndexCorrect} />
                 </div>
                 :
-                <div className="flex flex-col flex-1">
+                <div className="flex flex-col md:flex-row md:w-full md:justify-around md:gap-5 md:items-center flex-1">
                   <ArtistCardSkeleton />
                   <p className="text-center text-2xl">OR</p>
                   <ArtistCardSkeleton />

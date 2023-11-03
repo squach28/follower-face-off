@@ -26,6 +26,7 @@ const GameBoard: React.FC<GameBoardProps> = (gameBoardProps: GameBoardProps) => 
           setHighestStreak(data[gameBoardProps.category])
         }
       } 
+      console.log(import.meta.env.VITE_API_URL)
       fetch(`${import.meta.env.VITE_API_URL}:4000/artist/getArtistsByCategory?category=${gameBoardProps.category}`, {
         credentials: 'include'
       })

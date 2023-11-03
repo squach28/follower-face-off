@@ -1,5 +1,6 @@
 import { getAccessToken, isTokenExpired } from "../utilities/spotifyToken.js"
 import querystring from 'querystring'
+import axios from 'axios'
 
 const TOKEN_EXPIRATION_DURATION = 3600
 
@@ -42,7 +43,7 @@ export const getArtist = async (req, res, next) => {
         const tokenType = req.cookies.token_type
         const accessToken = req.cookies.access_token
         const timestamp = req.cookies.timestamp
-        const artist = await fetch('https://api.spotify.com/v1/artists/6HvZYsbFfjnjFrWF950C9d', {
+        const artist = await axios.get('https://api.spotify.com/v1/artists/6HvZYsbFfjnjFrWF950C9d', {
             headers: {
                 'Authorization': `Authorization: ${tokenType} ${accessToken}`
             },
@@ -65,7 +66,7 @@ export const getArtistsByCategory = async (req, res, next) => {
         const accessToken = req.cookies.access_token
         const timestamp = req.cookies.timestamp
         const category = req.query.category
-        const artists = await fetch('https://api.spotify.com/v1/search?' +
+        const artists = await axios.get('https://api.spotify.com/v1/search?' +
             querystring.stringify({
                 q: `genre:${category}`,
                 type: 'artist',
@@ -78,9 +79,8 @@ export const getArtistsByCategory = async (req, res, next) => {
             },
             credentials: 'include'
         })
-            .then(res => res.json())
-            .then(data => data.artists.items)
-        const shuffled = shuffleArray(artists)
+            .then(res => res.data.artists)
+        const shuffled = shuffleArray(artists.items)
         res.cookie('access_token', accessToken)
         res.cookie('token_type', tokenType)
         res.cookie('timestamp', timestamp)
